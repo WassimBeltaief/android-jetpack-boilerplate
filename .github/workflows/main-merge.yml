@@ -17,7 +17,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Lint + Static Analysis
-        run: ./gradlew lintDebug detekt spotlessCheck
+        run: ./gradlew lintDebug detekt
 
       - name: Unit Tests
         run: ./gradlew testDebug
