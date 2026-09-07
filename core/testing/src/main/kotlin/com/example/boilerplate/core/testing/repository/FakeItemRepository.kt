@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeItemRepository : ItemRepository {
-
     private val itemsFlow = MutableStateFlow<List<Item>>(emptyList())
     private val itemByIdFlow = MutableStateFlow<Item?>(null)
 

@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ItemRepository {
     fun getItems(): Flow<List<Item>>
+
     fun getItemById(id: String): Flow<Item?>
+
     suspend fun refreshItems()
 }

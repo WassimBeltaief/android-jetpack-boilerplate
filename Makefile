@@ -7,10 +7,7 @@ test:
 	./gradlew testDebug
 
 lint:
-	./gradlew lintDebug detekt spotlessCheck
-
-format:
-	./gradlew spotlessApply
+	./gradlew lintDebug detekt
 
 screenshot-record:
 	./gradlew recordRoborazziDebug

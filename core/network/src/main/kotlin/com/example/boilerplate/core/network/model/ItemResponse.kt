@@ -12,9 +12,10 @@ data class ItemResponse(
     @SerialName("image_url") val imageUrl: String = "",
 )
 
-fun ItemResponse.toModel() = Item(
-    id = id,
-    title = title,
-    description = description,
-    imageUrl = imageUrl,
-)
+fun ItemResponse.toModel() =
+    Item(
+        id = id,
+        title = title,
+        description = description,
+        imageUrl = imageUrl,
+    )

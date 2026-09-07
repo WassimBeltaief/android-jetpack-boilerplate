@@ -15,18 +15,20 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-
     @Provides
     @Singleton
     fun providesAppDatabase(
         @ApplicationContext context: Context,
     ): AppDatabase {
         lateinit var database: AppDatabase
-        database = Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            "boilerplate.db",
-        ).addCallback(DatabaseSeedCallback { database }).build()
+        database =
+            Room
+                .databaseBuilder(
+                    context,
+                    AppDatabase::class.java,
+                    "boilerplate.db",
+                ).addCallback(DatabaseSeedCallback { database })
+                .build()
         return database
     }
 

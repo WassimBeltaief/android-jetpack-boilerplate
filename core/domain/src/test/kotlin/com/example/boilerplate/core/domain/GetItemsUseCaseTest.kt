@@ -11,23 +11,30 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class GetItemsUseCaseTest {
+    private val fakeRepository =
+        object : ItemRepository {
+            private val flow = MutableStateFlow<List<Item>>(emptyList())
 
-    private val fakeRepository = object : ItemRepository {
-        private val flow = MutableStateFlow<List<Item>>(emptyList())
-        fun emit(items: List<Item>) { flow.value = items }
-        override fun getItems(): Flow<List<Item>> = flow
-        override fun getItemById(id: String): Flow<Item?> = MutableStateFlow(null)
-        override suspend fun refreshItems() = Unit
-    }
+            fun emit(items: List<Item>) {
+                flow.value = items
+            }
+
+            override fun getItems(): Flow<List<Item>> = flow
+
+            override fun getItemById(id: String): Flow<Item?> = MutableStateFlow(null)
+
+            override suspend fun refreshItems() = Unit
+        }
 
     @Test
-    fun `returns items from repository`() = runTest {
-        val items = listOf(Item(id = "1", title = "Test", description = "Desc"))
-        fakeRepository.emit(items)
+    fun `returns items from repository`() =
+        runTest {
+            val items = listOf(Item(id = "1", title = "Test", description = "Desc"))
+            fakeRepository.emit(items)
 
-        GetItemsUseCase(fakeRepository).invoke().test {
-            assertEquals(items, awaitItem())
-            cancelAndIgnoreRemainingEvents()
+            GetItemsUseCase(fakeRepository).invoke().test {
+                assertEquals(items, awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

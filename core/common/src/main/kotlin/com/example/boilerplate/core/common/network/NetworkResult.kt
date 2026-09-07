@@ -1,8 +1,15 @@
 package com.example.boilerplate.core.common.network
 
 sealed interface NetworkResult<out T> {
-    data class Success<T>(val data: T) : NetworkResult<T>
-    data class Error(val code: Int = -1, val message: String? = null) : NetworkResult<Nothing>
+    data class Success<T>(
+        val data: T,
+    ) : NetworkResult<T>
+
+    data class Error(
+        val code: Int = -1,
+        val message: String? = null,
+    ) : NetworkResult<Nothing>
+
     data object Loading : NetworkResult<Nothing>
 }
 

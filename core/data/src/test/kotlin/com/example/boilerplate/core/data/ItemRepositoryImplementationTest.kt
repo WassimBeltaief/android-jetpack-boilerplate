@@ -14,29 +14,31 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ItemRepositoryImplementationTest {
-
     private val testDispatcher = StandardTestDispatcher()
     private val itemDao = mockk<ItemDao>(relaxed = true)
     private val apiService = mockk<ApiService>(relaxed = true)
 
-    private val repository = ItemRepositoryImplementation(
-        itemDao = itemDao,
-        apiService = apiService,
-        ioDispatcher = testDispatcher,
-    )
+    private val repository =
+        ItemRepositoryImplementation(
+            itemDao = itemDao,
+            apiService = apiService,
+            ioDispatcher = testDispatcher,
+        )
 
     @Test
-    fun `getItems maps entities to domain models`() = runTest {
-        val entities = MutableStateFlow(
-            listOf(ItemEntity(id = "1", title = "T", description = "D", imageUrl = ""))
-        )
-        coEvery { itemDao.getItems() } returns entities
+    fun `getItems maps entities to domain models`() =
+        runTest {
+            val entities =
+                MutableStateFlow(
+                    listOf(ItemEntity(id = "1", title = "T", description = "D", imageUrl = "")),
+                )
+            coEvery { itemDao.getItems() } returns entities
 
-        repository.getItems().test {
-            val items = awaitItem()
-            assertEquals(1, items.size)
-            assertEquals("1", items[0].id)
-            cancelAndIgnoreRemainingEvents()
+            repository.getItems().test {
+                val items = awaitItem()
+                assertEquals(1, items.size)
+                assertEquals("1", items[0].id)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

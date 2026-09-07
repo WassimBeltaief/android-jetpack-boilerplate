@@ -12,16 +12,18 @@ data class ItemEntity(
     val imageUrl: String,
 )
 
-fun ItemEntity.toModel() = Item(
-    id = id,
-    title = title,
-    description = description,
-    imageUrl = imageUrl,
-)
+fun ItemEntity.toModel() =
+    Item(
+        id = id,
+        title = title,
+        description = description,
+        imageUrl = imageUrl,
+    )
 
-fun Item.toEntity() = ItemEntity(
-    id = id,
-    title = title,
-    description = description,
-    imageUrl = imageUrl,
-)
+fun Item.toEntity() =
+    ItemEntity(
+        id = id,
+        title = title,
+        description = description,
+        imageUrl = imageUrl,
+    )

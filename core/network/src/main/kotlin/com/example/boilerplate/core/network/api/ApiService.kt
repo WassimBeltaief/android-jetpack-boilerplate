@@ -9,5 +9,7 @@ interface ApiService {
     suspend fun getItems(): List<ItemResponse>
 
     @GET("items/{id}")
-    suspend fun getItemById(@Path("id") id: String): ItemResponse
+    suspend fun getItemById(
+        @Path("id") id: String,
+    ): ItemResponse
 }

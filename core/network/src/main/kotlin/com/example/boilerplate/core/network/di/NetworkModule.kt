@@ -19,28 +19,33 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     @Provides
     @Singleton
-    fun providesJson(): Json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-    }
+    fun providesJson(): Json =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
 
     @Provides
     @Singleton
     fun providesOkHttpClient(
         authInterceptor: AuthInterceptor,
         @Named("isDebug") isDebug: Boolean,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                level = if (isDebug) HttpLoggingInterceptor.Level.BODY
-                else HttpLoggingInterceptor.Level.NONE
-            }
-        )
-        .build()
+    ): OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level =
+                        if (isDebug) {
+                            HttpLoggingInterceptor.Level.BODY
+                        } else {
+                            HttpLoggingInterceptor.Level.NONE
+                        }
+                },
+            ).build()
 
     @Provides
     @Singleton
@@ -48,11 +53,13 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         json: Json,
         @Named("baseUrl") baseUrl: String,
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .client(okHttpClient)
-        .addConverterFactory(json.asConverterFactory("application/json; charset=UTF8".toMediaType()))
-        .build()
+    ): Retrofit =
+        Retrofit
+            .Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory("application/json; charset=UTF8".toMediaType()))
+            .build()
 
     @Provides
     @Singleton
@@ -60,7 +67,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesTokenProvider(): TokenProvider = object : TokenProvider {
-        override fun getToken(): String? = null
-    }
+    fun providesTokenProvider(): TokenProvider =
+        object : TokenProvider {
+            override fun getToken(): String? = null
+        }
 }
