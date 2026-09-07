@@ -10,4 +10,6 @@ dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:domain"))
     implementation(libs.kotlinx.coroutines.android)
+
+    testImplementation(project(":core:testing"))
 }
