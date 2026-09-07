@@ -8,7 +8,25 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.room) apply false
-    alias(libs.plugins.detekt) apply false
-    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.dependency.guard) apply false
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**/*.kt")
+        ktlint()
+    }
+    kotlinGradle {
+        target("**/*.kts")
+        targetExclude("**/build/**/*.kts")
+        ktlint()
+    }
 }
