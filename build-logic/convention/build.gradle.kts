@@ -23,7 +23,6 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.detekt.gradlePlugin)
-    compileOnly(libs.spotless.gradlePlugin)
     compileOnly(libs.roborazzi.gradlePlugin)
 }
 
