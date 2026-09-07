@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.roborazzi)
 }
 
+roborazzi {
+    outputDir.set(project.file("src/test/snapshots"))
+}
+
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
