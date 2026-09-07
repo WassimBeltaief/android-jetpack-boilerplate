@@ -13,9 +13,10 @@ import androidx.compose.ui.semantics.semantics
 fun LoadingIndicator(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .semantics { contentDescription = "Loading" },
+        modifier =
+            modifier
+                .fillMaxSize()
+                .semantics { contentDescription = "Loading" },
     ) {
         CircularProgressIndicator()
     }

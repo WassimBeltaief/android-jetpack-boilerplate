@@ -11,7 +11,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppBindingsModule {
-
     @Provides
     @Singleton
     @Named("baseUrl")

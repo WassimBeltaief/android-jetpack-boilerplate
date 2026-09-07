@@ -16,7 +16,6 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34])
 class HomeScreenScreenshotTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 

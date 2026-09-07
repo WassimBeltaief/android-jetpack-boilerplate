@@ -47,17 +47,25 @@ fun DetailScreen(
         modifier = modifier,
     ) { padding ->
         when (uiState) {
-            is DetailUiState.Loading -> LoadingIndicator(
-                modifier = Modifier.padding(padding),
-            )
-            is DetailUiState.Error -> ErrorMessage(
-                message = uiState.message,
-                modifier = Modifier.padding(padding),
-            )
-            is DetailUiState.Success -> ItemDetail(
-                item = uiState.item,
-                modifier = Modifier.padding(padding),
-            )
+            is DetailUiState.Loading -> {
+                LoadingIndicator(
+                    modifier = Modifier.padding(padding),
+                )
+            }
+
+            is DetailUiState.Error -> {
+                ErrorMessage(
+                    message = uiState.message,
+                    modifier = Modifier.padding(padding),
+                )
+            }
+
+            is DetailUiState.Success -> {
+                ItemDetail(
+                    item = uiState.item,
+                    modifier = Modifier.padding(padding),
+                )
+            }
         }
     }
 }
@@ -68,9 +76,10 @@ private fun ItemDetail(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         Text(text = item.title, style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(8.dp))

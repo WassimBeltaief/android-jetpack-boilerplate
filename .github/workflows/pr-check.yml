@@ -20,6 +20,10 @@ jobs:
           distribution: 'temurin'
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew lintDebug detekt
+      - name: ktlint
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint && chmod +x ktlint
+          ./ktlint --editorconfig=".editorconfig" "app/src/**/*.kt" "core/*/src/**/*.kt" "feature/*/src/**/*.kt" "build-logic/**/*.kt"
 
   test:
     name: Unit Tests

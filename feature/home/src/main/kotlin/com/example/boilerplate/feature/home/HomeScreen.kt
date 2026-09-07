@@ -30,18 +30,26 @@ fun HomeScreen(
         modifier = modifier,
     ) { padding ->
         when (uiState) {
-            is HomeUiState.Loading -> LoadingIndicator(
-                modifier = Modifier.padding(padding),
-            )
-            is HomeUiState.Error -> ErrorMessage(
-                message = uiState.message,
-                modifier = Modifier.padding(padding),
-            )
-            is HomeUiState.Success -> ItemList(
-                items = uiState.items,
-                onItemClick = onItemClick,
-                modifier = Modifier.padding(padding),
-            )
+            is HomeUiState.Loading -> {
+                LoadingIndicator(
+                    modifier = Modifier.padding(padding),
+                )
+            }
+
+            is HomeUiState.Error -> {
+                ErrorMessage(
+                    message = uiState.message,
+                    modifier = Modifier.padding(padding),
+                )
+            }
+
+            is HomeUiState.Success -> {
+                ItemList(
+                    items = uiState.items,
+                    onItemClick = onItemClick,
+                    modifier = Modifier.padding(padding),
+                )
+            }
         }
     }
 }

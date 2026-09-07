@@ -7,7 +7,11 @@ sealed interface HomeUiState {
     data object Loading : HomeUiState
 
     @Immutable
-    data class Success(val items: List<Item>) : HomeUiState
+    data class Success(
+        val items: List<Item>,
+    ) : HomeUiState
 
-    data class Error(val message: String) : HomeUiState
+    data class Error(
+        val message: String,
+    ) : HomeUiState
 }

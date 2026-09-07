@@ -14,27 +14,31 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    getItemsUseCase: GetItemsUseCase,
-) : ViewModel() {
+class HomeViewModel
+    @Inject
+    constructor(
+        getItemsUseCase: GetItemsUseCase,
+    ) : ViewModel() {
+        val uiState: StateFlow<HomeUiState> =
+            getItemsUseCase()
+                .map<_, HomeUiState> { HomeUiState.Success(it) }
+                .catch { emit(HomeUiState.Error(it.message ?: "Unknown error")) }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = HomeUiState.Loading,
+                )
 
-    val uiState: StateFlow<HomeUiState> = getItemsUseCase()
-        .map<_, HomeUiState> { HomeUiState.Success(it) }
-        .catch { emit(HomeUiState.Error(it.message ?: "Unknown error")) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = HomeUiState.Loading,
-        )
+        private val _events = MutableSharedFlow<HomeEvent>(extraBufferCapacity = 1)
+        val events = _events.asSharedFlow()
 
-    private val _events = MutableSharedFlow<HomeEvent>(extraBufferCapacity = 1)
-    val events = _events.asSharedFlow()
-
-    fun onItemClick(id: String) {
-        _events.tryEmit(HomeEvent.NavigateToDetail(id))
+        fun onItemClick(id: String) {
+            _events.tryEmit(HomeEvent.NavigateToDetail(id))
+        }
     }
-}
 
 sealed interface HomeEvent {
-    data class NavigateToDetail(val id: String) : HomeEvent
+    data class NavigateToDetail(
+        val id: String,
+    ) : HomeEvent
 }

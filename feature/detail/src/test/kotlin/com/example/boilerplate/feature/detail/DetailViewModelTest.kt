@@ -14,7 +14,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class DetailViewModelTest {
-
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -23,40 +22,44 @@ class DetailViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = DetailViewModel(
-            savedStateHandle = SavedStateHandle(mapOf("id" to testItem.id)),
-            getItemByIdUseCase = GetItemByIdUseCase(fakeRepository),
-        )
+        viewModel =
+            DetailViewModel(
+                savedStateHandle = SavedStateHandle(mapOf("id" to testItem.id)),
+                getItemByIdUseCase = GetItemByIdUseCase(fakeRepository),
+            )
     }
 
     @Test
-    fun `uiState is Loading initially`() = runTest {
-        viewModel.uiState.test {
-            assertTrue(awaitItem() is DetailUiState.Loading)
-            cancelAndIgnoreRemainingEvents()
+    fun `uiState is Loading initially`() =
+        runTest {
+            viewModel.uiState.test {
+                assertTrue(awaitItem() is DetailUiState.Loading)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `uiState emits Success when item is found`() = runTest {
-        fakeRepository.emitItem(testItem)
+    fun `uiState emits Success when item is found`() =
+        runTest {
+            fakeRepository.emitItem(testItem)
 
-        viewModel.uiState.test {
-            skipItems(1)
-            val success = awaitItem() as DetailUiState.Success
-            assertEquals(testItem, success.item)
-            cancelAndIgnoreRemainingEvents()
+            viewModel.uiState.test {
+                skipItems(1)
+                val success = awaitItem() as DetailUiState.Success
+                assertEquals(testItem, success.item)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `uiState emits Error when item is null`() = runTest {
-        fakeRepository.emitItem(null)
+    fun `uiState emits Error when item is null`() =
+        runTest {
+            fakeRepository.emitItem(null)
 
-        viewModel.uiState.test {
-            skipItems(1)
-            assertTrue(awaitItem() is DetailUiState.Error)
-            cancelAndIgnoreRemainingEvents()
+            viewModel.uiState.test {
+                skipItems(1)
+                assertTrue(awaitItem() is DetailUiState.Error)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

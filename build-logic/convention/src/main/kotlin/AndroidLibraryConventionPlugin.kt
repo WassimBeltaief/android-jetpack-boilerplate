@@ -16,12 +16,13 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 defaultConfig.targetSdk = 36
 
                 // Auto-derive namespace from module path: :core:common → com.example.boilerplate.core.common
-                namespace = "com.example.boilerplate" + path
-                    .split(":")
-                    .drop(1)
-                    .filter { it.isNotEmpty() }
-                    .joinToString(".") { it }
-                    .let { if (it.isNotEmpty()) ".$it" else "" }
+                namespace = "com.example.boilerplate" +
+                    path
+                        .split(":")
+                        .drop(1)
+                        .filter { it.isNotEmpty() }
+                        .joinToString(".") { it }
+                        .let { if (it.isNotEmpty()) ".$it" else "" }
 
                 resourcePrefix = path
                     .split("""\W""".toRegex())

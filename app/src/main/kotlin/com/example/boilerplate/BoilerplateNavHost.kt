@@ -5,10 +5,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.boilerplate.core.navigation.DetailRoute as DetailNavRoute
-import com.example.boilerplate.core.navigation.HomeRoute as HomeNavRoute
 import com.example.boilerplate.feature.detail.DetailRoute
 import com.example.boilerplate.feature.home.HomeRoute
+import com.example.boilerplate.core.navigation.DetailRoute as DetailNavRoute
+import com.example.boilerplate.core.navigation.HomeRoute as HomeNavRoute
 
 @Composable
 fun BoilerplateNavHost(modifier: Modifier = Modifier) {

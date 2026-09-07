@@ -9,7 +9,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class HomeScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
