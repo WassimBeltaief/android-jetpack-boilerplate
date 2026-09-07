@@ -1,0 +1,38 @@
+name: Main Merge
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  verify:
+    name: Full Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Lint + Static Analysis
+        run: ./gradlew lintDebug detekt spotlessCheck
+
+      - name: Unit Tests
+        run: ./gradlew testDebug
+
+      - name: Screenshot Verification
+        run: ./gradlew verifyRoborazziDebug
+
+      - name: Dependency Guard
+        run: ./gradlew dependencyGuard
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshot-diffs
+          path: '**/build/outputs/roborazzi/'
