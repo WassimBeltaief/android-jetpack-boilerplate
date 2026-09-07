@@ -24,6 +24,11 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
                 isIncludeAndroidResources = true
             }
         }
+
+        lint {
+            // Incompatible with Kotlin 2.x Analysis API; irrelevant since we don't use LiveData
+            disable += "NullSafeMutableLiveData"
+        }
     }
 
     extensions.configure(KotlinAndroidProjectExtension::class.java) {
@@ -33,7 +38,7 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
                 listOf(
                     "-opt-in=kotlin.RequiresOptIn",
                     "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                )
+                ),
             )
         }
     }
