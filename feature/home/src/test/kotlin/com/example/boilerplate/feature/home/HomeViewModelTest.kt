@@ -1,15 +1,19 @@
 package com.example.boilerplate.feature.home
 
 import app.cash.turbine.test
+import com.example.boilerplate.core.domain.repository.ItemRepository
 import com.example.boilerplate.core.domain.usecase.GetItemsUseCase
 import com.example.boilerplate.core.testing.MainDispatcherRule
 import com.example.boilerplate.core.testing.data.testItem
 import com.example.boilerplate.core.testing.data.testItems
-import com.example.boilerplate.core.testing.repository.FakeItemRepository
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,46 +21,43 @@ class HomeViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val fakeRepository = FakeItemRepository()
-    private lateinit var viewModel: HomeViewModel
+    private val repository = mockk<ItemRepository>()
 
-    @Before
-    fun setup() {
-        viewModel = HomeViewModel(GetItemsUseCase(fakeRepository))
+    private fun createViewModel() = HomeViewModel(GetItemsUseCase(repository))
+
+    @Test
+    fun `uiState initial value is Loading`() {
+        every { repository.getItems() } returns emptyFlow()
+        assertEquals(HomeUiState.Loading, createViewModel().uiState.value)
     }
 
     @Test
-    fun `uiState starts with Loading before any emission`() =
-        runTest {
-            viewModel.uiState.test {
-                // Initial value from stateIn before upstream collection runs
-                val first = awaitItem()
-                assertTrue(
-                    "Expected Loading or Success, got $first",
-                    first is HomeUiState.Loading || first is HomeUiState.Success,
-                )
-                cancelAndIgnoreRemainingEvents()
-            }
+    fun `uiState emits Success when repository emits items`() = runTest {
+        every { repository.getItems() } returns flowOf(testItems)
+        createViewModel().uiState.test {
+            skipItems(1)
+            assertEquals(HomeUiState.Success(testItems), awaitItem())
+            cancelAndIgnoreRemainingEvents()
         }
+    }
 
     @Test
-    fun `uiState emits Success when items are available`() =
-        runTest {
-            viewModel.uiState.test {
-                awaitItem() // Consume initial state (Loading or Success(empty))
-                fakeRepository.emit(testItems) // Emit inside the test block
-                val success = awaitItem() as HomeUiState.Success
-                assertEquals(testItems, success.items)
-                cancelAndIgnoreRemainingEvents()
-            }
+    fun `uiState emits Error when repository throws`() = runTest {
+        every { repository.getItems() } returns flow { throw RuntimeException("network error") }
+        createViewModel().uiState.test {
+            skipItems(1)
+            assertTrue(awaitItem() is HomeUiState.Error)
+            cancelAndIgnoreRemainingEvents()
         }
+    }
 
     @Test
-    fun `onItemClick emits NavigateToDetail event`() =
-        runTest {
-            viewModel.events.test {
-                viewModel.onItemClick(testItem.id)
-                assertEquals(HomeEvent.NavigateToDetail(testItem.id), awaitItem())
-            }
+    fun `onItemClick emits NavigateToDetail event`() = runTest {
+        every { repository.getItems() } returns emptyFlow()
+        val viewModel = createViewModel()
+        viewModel.events.test {
+            viewModel.onItemClick(testItem.id)
+            assertEquals(HomeEvent.NavigateToDetail(testItem.id), awaitItem())
         }
+    }
 }

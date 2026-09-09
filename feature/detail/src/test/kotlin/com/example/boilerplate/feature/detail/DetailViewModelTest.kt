@@ -2,14 +2,17 @@ package com.example.boilerplate.feature.detail
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
+import com.example.boilerplate.core.domain.repository.ItemRepository
 import com.example.boilerplate.core.domain.usecase.GetItemByIdUseCase
 import com.example.boilerplate.core.testing.MainDispatcherRule
 import com.example.boilerplate.core.testing.data.testItem
-import com.example.boilerplate.core.testing.repository.FakeItemRepository
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,49 +20,37 @@ class DetailViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val fakeRepository = FakeItemRepository()
-    private lateinit var viewModel: DetailViewModel
+    private val repository = mockk<ItemRepository>()
 
-    @Before
-    fun setup() {
-        viewModel =
-            DetailViewModel(
-                savedStateHandle = SavedStateHandle(mapOf("id" to testItem.id)),
-                getItemByIdUseCase = GetItemByIdUseCase(fakeRepository),
-            )
+    private fun createViewModel() =
+        DetailViewModel(
+            savedStateHandle = SavedStateHandle(mapOf("id" to testItem.id)),
+            getItemByIdUseCase = GetItemByIdUseCase(repository),
+        )
+
+    @Test
+    fun `uiState initial value is Loading`() {
+        every { repository.getItemById(testItem.id) } returns emptyFlow()
+        assertEquals(DetailUiState.Loading, createViewModel().uiState.value)
     }
 
     @Test
-    fun `uiState is Loading initially`() =
-        runTest {
-            viewModel.uiState.test {
-                assertTrue(awaitItem() is DetailUiState.Loading)
-                cancelAndIgnoreRemainingEvents()
-            }
+    fun `uiState emits Success when item is found`() = runTest {
+        every { repository.getItemById(testItem.id) } returns flowOf(testItem)
+        createViewModel().uiState.test {
+            skipItems(1)
+            assertEquals(DetailUiState.Success(testItem), awaitItem())
+            cancelAndIgnoreRemainingEvents()
         }
+    }
 
     @Test
-    fun `uiState emits Success when item is found`() =
-        runTest {
-            fakeRepository.emitItem(testItem)
-
-            viewModel.uiState.test {
-                skipItems(1)
-                val success = awaitItem() as DetailUiState.Success
-                assertEquals(testItem, success.item)
-                cancelAndIgnoreRemainingEvents()
-            }
+    fun `uiState emits Error when item is not found`() = runTest {
+        every { repository.getItemById(testItem.id) } returns flowOf(null)
+        createViewModel().uiState.test {
+            skipItems(1)
+            assertTrue(awaitItem() is DetailUiState.Error)
+            cancelAndIgnoreRemainingEvents()
         }
-
-    @Test
-    fun `uiState emits Error when item is null`() =
-        runTest {
-            fakeRepository.emitItem(null)
-
-            viewModel.uiState.test {
-                skipItems(1)
-                assertTrue(awaitItem() is DetailUiState.Error)
-                cancelAndIgnoreRemainingEvents()
-            }
-        }
+    }
 }
