@@ -1,6 +1,7 @@
 plugins {
     id("boilerplate.android.application")
     id("boilerplate.android.hilt")
+    alias(libs.plugins.dependency.guard)
 }
 
 android {
@@ -22,6 +23,10 @@ android {
             )
         }
     }
+}
+
+dependencyGuard {
+    configuration("prodReleaseRuntimeClasspath")
 }
 
 dependencies {
