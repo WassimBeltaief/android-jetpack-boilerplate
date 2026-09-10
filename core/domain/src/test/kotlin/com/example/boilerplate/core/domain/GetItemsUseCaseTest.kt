@@ -15,13 +15,14 @@ class GetItemsUseCaseTest {
     private val repository = mockk<ItemRepository>()
 
     @Test
-    fun `returns items from repository`() = runTest {
-        val items = listOf(Item(id = "1", title = "Test", description = "Desc"))
-        every { repository.getItems() } returns flowOf(items)
+    fun `returns items from repository`() =
+        runTest {
+            val items = listOf(Item(id = "1", title = "Test", description = "Desc"))
+            every { repository.getItems() } returns flowOf(items)
 
-        GetItemsUseCase(repository).invoke().test {
-            assertEquals(items, awaitItem())
-            cancelAndIgnoreRemainingEvents()
+            GetItemsUseCase(repository).invoke().test {
+                assertEquals(items, awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

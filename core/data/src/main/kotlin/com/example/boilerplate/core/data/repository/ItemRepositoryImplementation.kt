@@ -16,19 +16,21 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ItemRepositoryImplementation @Inject constructor(
-    private val itemDao: ItemDao,
-    private val apiService: ApiService,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-) : ItemRepository {
-    override fun getItems(): Flow<List<Item>> = itemDao.getItems().map { entities -> entities.map { it.toModel() } }
+class ItemRepositoryImplementation
+    @Inject
+    constructor(
+        private val itemDao: ItemDao,
+        private val apiService: ApiService,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    ) : ItemRepository {
+        override fun getItems(): Flow<List<Item>> = itemDao.getItems().map { entities -> entities.map { it.toModel() } }
 
-    override fun getItemById(id: String): Flow<Item?> = itemDao.getItemById(id).map { it?.toModel() }
+        override fun getItemById(id: String): Flow<Item?> = itemDao.getItemById(id).map { it?.toModel() }
 
-    override suspend fun refreshItems() =
-        withContext(ioDispatcher) {
-            val items = apiService.getItems().map { it.toModel().toEntity() }
-            itemDao.deleteAllItems()
-            itemDao.insertItems(items)
-        }
-}
+        override suspend fun refreshItems() =
+            withContext(ioDispatcher) {
+                val items = apiService.getItems().map { it.toModel().toEntity() }
+                itemDao.deleteAllItems()
+                itemDao.insertItems(items)
+            }
+    }

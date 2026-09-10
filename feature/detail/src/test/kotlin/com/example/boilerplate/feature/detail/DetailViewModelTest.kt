@@ -35,22 +35,24 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `uiState emits Success when item is found`() = runTest {
-        every { repository.getItemById(testItem.id) } returns flowOf(testItem)
-        createViewModel().uiState.test {
-            skipItems(1)
-            assertEquals(DetailUiState.Success(testItem), awaitItem())
-            cancelAndIgnoreRemainingEvents()
+    fun `uiState emits Success when item is found`() =
+        runTest {
+            every { repository.getItemById(testItem.id) } returns flowOf(testItem)
+            createViewModel().uiState.test {
+                skipItems(1)
+                assertEquals(DetailUiState.Success(testItem), awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `uiState emits Error when item is not found`() = runTest {
-        every { repository.getItemById(testItem.id) } returns flowOf(null)
-        createViewModel().uiState.test {
-            skipItems(1)
-            assertTrue(awaitItem() is DetailUiState.Error)
-            cancelAndIgnoreRemainingEvents()
+    fun `uiState emits Error when item is not found`() =
+        runTest {
+            every { repository.getItemById(testItem.id) } returns flowOf(null)
+            createViewModel().uiState.test {
+                skipItems(1)
+                assertTrue(awaitItem() is DetailUiState.Error)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

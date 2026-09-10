@@ -32,32 +32,35 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `uiState emits Success when repository emits items`() = runTest {
-        every { repository.getItems() } returns flowOf(testItems)
-        createViewModel().uiState.test {
-            skipItems(1)
-            assertEquals(HomeUiState.Success(testItems), awaitItem())
-            cancelAndIgnoreRemainingEvents()
+    fun `uiState emits Success when repository emits items`() =
+        runTest {
+            every { repository.getItems() } returns flowOf(testItems)
+            createViewModel().uiState.test {
+                skipItems(1)
+                assertEquals(HomeUiState.Success(testItems), awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `uiState emits Error when repository throws`() = runTest {
-        every { repository.getItems() } returns flow { throw RuntimeException("network error") }
-        createViewModel().uiState.test {
-            skipItems(1)
-            assertTrue(awaitItem() is HomeUiState.Error)
-            cancelAndIgnoreRemainingEvents()
+    fun `uiState emits Error when repository throws`() =
+        runTest {
+            every { repository.getItems() } returns flow { throw RuntimeException("network error") }
+            createViewModel().uiState.test {
+                skipItems(1)
+                assertTrue(awaitItem() is HomeUiState.Error)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `onItemClick emits NavigateToDetail event`() = runTest {
-        every { repository.getItems() } returns emptyFlow()
-        val viewModel = createViewModel()
-        viewModel.events.test {
-            viewModel.onItemClick(testItem.id)
-            assertEquals(HomeEvent.NavigateToDetail(testItem.id), awaitItem())
+    fun `onItemClick emits NavigateToDetail event`() =
+        runTest {
+            every { repository.getItems() } returns emptyFlow()
+            val viewModel = createViewModel()
+            viewModel.events.test {
+                viewModel.onItemClick(testItem.id)
+                assertEquals(HomeEvent.NavigateToDetail(testItem.id), awaitItem())
+            }
         }
-    }
 }
