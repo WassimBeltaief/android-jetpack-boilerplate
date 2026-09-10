@@ -39,7 +39,6 @@ class DetailViewModelTest {
         runTest {
             every { repository.getItemById(testItem.id) } returns flowOf(testItem)
             createViewModel().uiState.test {
-                skipItems(1)
                 assertEquals(DetailUiState.Success(testItem), awaitItem())
                 cancelAndIgnoreRemainingEvents()
             }
@@ -50,7 +49,6 @@ class DetailViewModelTest {
         runTest {
             every { repository.getItemById(testItem.id) } returns flowOf(null)
             createViewModel().uiState.test {
-                skipItems(1)
                 assertTrue(awaitItem() is DetailUiState.Error)
                 cancelAndIgnoreRemainingEvents()
             }

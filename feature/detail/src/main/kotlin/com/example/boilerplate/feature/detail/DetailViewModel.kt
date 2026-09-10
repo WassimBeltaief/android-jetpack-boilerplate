@@ -3,7 +3,6 @@ package com.example.boilerplate.feature.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.example.boilerplate.core.domain.usecase.GetItemByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
-import com.example.boilerplate.core.navigation.DetailRoute as DetailNavRoute
 
 @HiltViewModel
 class DetailViewModel
@@ -21,7 +19,7 @@ class DetailViewModel
         savedStateHandle: SavedStateHandle,
         getItemByIdUseCase: GetItemByIdUseCase,
     ) : ViewModel() {
-        private val itemId: String = savedStateHandle.toRoute<DetailNavRoute>().id
+        private val itemId: String = checkNotNull(savedStateHandle["id"]) { "item id is required" }
 
         val uiState: StateFlow<DetailUiState> =
             getItemByIdUseCase(itemId)

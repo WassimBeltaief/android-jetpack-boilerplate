@@ -36,7 +36,6 @@ class HomeViewModelTest {
         runTest {
             every { repository.getItems() } returns flowOf(testItems)
             createViewModel().uiState.test {
-                skipItems(1)
                 assertEquals(HomeUiState.Success(testItems), awaitItem())
                 cancelAndIgnoreRemainingEvents()
             }
@@ -47,7 +46,6 @@ class HomeViewModelTest {
         runTest {
             every { repository.getItems() } returns flow { throw RuntimeException("network error") }
             createViewModel().uiState.test {
-                skipItems(1)
                 assertTrue(awaitItem() is HomeUiState.Error)
                 cancelAndIgnoreRemainingEvents()
             }
